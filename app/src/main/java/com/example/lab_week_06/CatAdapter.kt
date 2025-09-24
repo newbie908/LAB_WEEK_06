@@ -1,9 +1,13 @@
 package com.example.lab_week_06
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.lab_week_06.model.CatModel
 import com.example.lab_week_06.model.ImageLoader
 
@@ -43,8 +47,9 @@ class CatAdapter(
         fun onItemClick(cat: CatModel)
     }
 
+    // Custom swipe with delete button
     inner class SwipeToDeleteCallback :
-        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
         override fun onMove(
             recyclerView: RecyclerView,
@@ -55,6 +60,42 @@ class CatAdapter(
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
             removeItem(position)
+        }
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float, dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            val itemView = viewHolder.itemView
+            val paint = Paint()
+            paint.color = Color.RED
+
+            // background merah
+            c.drawRect(
+                itemView.right.toFloat() + dX,
+                itemView.top.toFloat(),
+                itemView.right.toFloat(),
+                itemView.bottom.toFloat(),
+                paint
+            )
+
+            // icon delete
+            val icon = ContextCompat.getDrawable(itemView.context, android.R.drawable.ic_menu_delete)
+            icon?.let {
+                val iconMargin = (itemView.height - it.intrinsicHeight) / 2
+                val iconTop = itemView.top + (itemView.height - it.intrinsicHeight) / 2
+                val iconLeft = itemView.right - iconMargin - it.intrinsicWidth
+                val iconRight = itemView.right - iconMargin
+                val iconBottom = iconTop + it.intrinsicHeight
+                it.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                it.draw(c)
+            }
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
 

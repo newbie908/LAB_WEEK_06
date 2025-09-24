@@ -3,11 +3,11 @@ package com.example.lab_week_06
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lab_week_06.model.CatModel
 import com.example.lab_week_06.model.CatBreed
+import com.example.lab_week_06.model.CatModel
 import com.example.lab_week_06.model.Gender
 
 class MainActivity : AppCompatActivity() {
@@ -26,9 +26,10 @@ class MainActivity : AppCompatActivity() {
             GlideImageLoader(this),
             object : CatAdapter.OnClickListener {
                 override fun onItemClick(cat: CatModel) {
+                    // Versi Commit 3 → dialog sederhana
                     AlertDialog.Builder(this@MainActivity)
-                        .setTitle(cat.name)
-                        .setMessage("${cat.breed}\n${cat.biography}")
+                        .setTitle("Cat Selected")
+                        .setMessage("You have selected cat ${cat.name}")
                         .setPositiveButton("OK", null)
                         .show()
                 }
@@ -38,9 +39,11 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = catAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Swipe to Delete
         val itemTouchHelper = ItemTouchHelper(catAdapter.swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+        // Data sudah 10 item
         catAdapter.setData(
             listOf(
                 CatModel(
